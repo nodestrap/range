@@ -1,0 +1,54 @@
+{
+  "name": "@nodestrap/range",
+  "version": "4.0.0",
+  "description": "A UI for the user defines a numeric value in the specified range.",
+  "type": "module",
+  "main": "dist/Range.jsx",
+  "types": "dist/Range.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodestrap/range.git"
+  },
+  "keywords": [
+    "input",
+    "range",
+    "slider",
+    "control",
+    "controllable",
+    "component",
+    "element",
+    "react",
+    "nodestrap",
+    "styled"
+  ],
+  "author": "heymarco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nodestrap/range/issues"
+  },
+  "homepage": "https://github.com/nodestrap/range#readme",
+  "dependencies": {
+    "@cssfn/css-config": "^1.0.1",
+    "@cssfn/css-var": "^1.0.2",
+    "@cssfn/cssfn": "^1.0.3",
+    "@cssfn/react-cssfn": "^1.0.3",
+    "@cssfn/types": "^1.0.3",
+    "@nodestrap/accessibilities": "^4.0.1",
+    "@nodestrap/action-control": "^4.0.2",
+    "@nodestrap/basic": "^4.0.2",
+    "@nodestrap/borders": "^4.0.1",
+    "@nodestrap/content": "^4.0.2",
+    "@nodestrap/control": "^4.0.2",
+    "@nodestrap/editable-action-control": "^4.0.2",
+    "@nodestrap/editable-control": "^4.0.2",
+    "@nodestrap/element": "^4.0.1",
+    "@nodestrap/layouts": "^4.0.1",
+    "@nodestrap/utilities": "^4.0.0",
+    "@types/react": "^17.0.36",
+    "react": "^17.0.2",
+    "react-trigger-change": "^1.0.2"
+  }
+}
