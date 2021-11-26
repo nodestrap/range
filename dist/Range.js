@@ -522,154 +522,139 @@ export function Range(props) {
     // range vars:
     const [, , rangeVarDecls] = usesRangeVars();
     // jsx fn props:
-    const trackLower = (<Element 
+    const trackLower = (React.createElement(Element
     // essentials:
-    elmRef={(elm) => {
+    , { 
+        // essentials:
+        elmRef: (elm) => {
             setRef(trackLowerRef, elm);
-        }} 
-    // semantics:
-    tag={trackLowerTag} role={trackLowerRole} semanticTag={trackLowerSemanticTag} semanticRole={trackLowerSemanticRole} 
-    // classes:
-    mainClass={trackLowerMainClass} classes={[...(trackLowerClasses ?? []),
+        }, 
+        // semantics:
+        tag: trackLowerTag, role: trackLowerRole, semanticTag: trackLowerSemanticTag, semanticRole: trackLowerSemanticRole, 
+        // classes:
+        mainClass: trackLowerMainClass, classes: [...(trackLowerClasses ?? []),
             'tracklower',
-        ]} variantClasses={trackLowerVariantClasses} stateClasses={trackLowerStateClasses} 
-    // styles:
-    style={trackLowerStyle}>
-        </Element>);
-    const trackUpper = (<Element 
+        ], variantClasses: trackLowerVariantClasses, stateClasses: trackLowerStateClasses, 
+        // styles:
+        style: trackLowerStyle }));
+    const trackUpper = (React.createElement(Element
     // essentials:
-    elmRef={(elm) => {
+    , { 
+        // essentials:
+        elmRef: (elm) => {
             setRef(trackUpperRef, elm);
-        }} 
-    // semantics:
-    tag={trackUpperTag} role={trackUpperRole} semanticTag={trackUpperSemanticTag} semanticRole={trackUpperSemanticRole} 
-    // classes:
-    mainClass={trackUpperMainClass} classes={[...(trackUpperClasses ?? []),
+        }, 
+        // semantics:
+        tag: trackUpperTag, role: trackUpperRole, semanticTag: trackUpperSemanticTag, semanticRole: trackUpperSemanticRole, 
+        // classes:
+        mainClass: trackUpperMainClass, classes: [...(trackUpperClasses ?? []),
             'trackupper',
-        ]} variantClasses={trackUpperVariantClasses} stateClasses={trackUpperStateClasses} 
-    // styles:
-    style={trackUpperStyle}>
-        </Element>);
+        ], variantClasses: trackUpperVariantClasses, stateClasses: trackUpperStateClasses, 
+        // styles:
+        style: trackUpperStyle }));
     // jsx:
-    return (<EditableControl 
-    // other props:
-    {...restProps} 
-    // semantics:
-    semanticTag={props.semanticTag ?? [null]} semanticRole={props.semanticRole ?? 'slider'} aria-orientation={props['aria-orientation'] ?? (orientationVertical ? 'vertical' : 'horizontal')} aria-valuenow={props['aria-valuenow'] ?? valueFn} aria-valuemin={props['aria-valuemin'] ?? (negativeFn ? maxFn : minFn)} aria-valuemax={props['aria-valuemax'] ?? (negativeFn ? minFn : maxFn)} 
-    // variants:
-    theme={theme} mild={mild} 
-    // classes:
-    mainClass={props.mainClass ?? sheet.main} variantClasses={[...(props.variantClasses ?? []),
+    return (React.createElement(EditableControl, { ...restProps, 
+        // semantics:
+        semanticTag: props.semanticTag ?? [null], semanticRole: props.semanticRole ?? 'slider', "aria-orientation": props['aria-orientation'] ?? (orientationVertical ? 'vertical' : 'horizontal'), "aria-valuenow": props['aria-valuenow'] ?? valueFn, "aria-valuemin": props['aria-valuemin'] ?? (negativeFn ? maxFn : minFn), "aria-valuemax": props['aria-valuemax'] ?? (negativeFn ? minFn : maxFn), 
+        // variants:
+        theme: theme, mild: mild, 
+        // classes:
+        mainClass: props.mainClass ?? sheet.main, variantClasses: [...(props.variantClasses ?? []),
             orientationVariant.class,
             nudeVariant.class,
-        ]} stateClasses={[...(props.stateClasses ?? []),
+        ], stateClasses: [...(props.stateClasses ?? []),
             focusBlurState.class,
             arriveLeaveState.class,
-        ]} 
-    // styles:
-    style={{ ...(props.style ?? {}),
+        ], 
+        // styles:
+        style: { ...(props.style ?? {}),
             // values:
             [rangeVarDecls.valueRatio]: valueRatio,
-        }} 
-    // events:
-    onFocus={(e) => { props.onFocus?.(e); focusBlurState.handleFocus(); }} onBlur={(e) => { props.onBlur?.(e); focusBlurState.handleBlur(); }} onMouseEnter={(e) => { props.onMouseEnter?.(e); arriveLeaveState.handleMouseEnter(); }} onMouseLeave={(e) => { props.onMouseLeave?.(e); arriveLeaveState.handleMouseLeave(); }} onMouseDown={(e) => {
+        }, 
+        // events:
+        onFocus: (e) => { props.onFocus?.(e); focusBlurState.handleFocus(); }, onBlur: (e) => { props.onBlur?.(e); focusBlurState.handleBlur(); }, onMouseEnter: (e) => { props.onMouseEnter?.(e); arriveLeaveState.handleMouseEnter(); }, onMouseLeave: (e) => { props.onMouseLeave?.(e); arriveLeaveState.handleMouseLeave(); }, onMouseDown: (e) => {
             props.onMouseDown?.(e);
             handleMouseSlider(e);
-        }} onMouseMove={(e) => {
+        }, onMouseMove: (e) => {
             props.onMouseMove?.(e);
             handleMouseSlider(e);
-        }} onKeyDown={(e) => {
+        }, onKeyDown: (e) => {
             props.onKeyDown?.(e);
             handleKeyboardSlider(e);
-        }} onAnimationEnd={(e) => {
+        }, onAnimationEnd: (e) => {
             props.onAnimationEnd?.(e);
             // states:
             focusBlurState.handleAnimationEnd(e);
             arriveLeaveState.handleAnimationEnd(e);
-        }}>
-            <input 
-    // essentials:
-    ref={(elm) => {
-            setRef(elmRef, elm);
-            setRef(inputRef, elm);
-        }} 
-    // accessibilities:
-    {...{
-        autoFocus,
-        tabIndex: -1, // non focusable
-    }} disabled={!propEnabled} // do not submit the value if disabled
-     readOnly={propReadOnly} // locks the value if readOnly
-     
-    // values:
-    {...{
-        name,
-        form,
-        // defaultValue,
-        value: valueFn,
-    }} 
-    // validations:
-    {...{
-        required,
-        min: negativeFn ? trimValue(maxFn) : minFn,
-        max: negativeFn ? minFn : maxFn,
-        step: stepFn,
-    }} 
-    // formats:
-    {...{
-        type: 'range',
-    }} 
-    // events:
-    onChange={(e) => {
-            onChange?.(e);
-            // then do nothing here, just for satisfying React for controllable readonly input
-            // passing `onChange={undefined}` causing React unhappy
-        }}/>
-            <EditableControl 
-    // essentials:
-    elmRef={(elm) => {
-            setRef(trackRef, elm);
-            setRef(trackRef2, elm);
-        }} 
-    // semantics:
-    tag={trackTag} role={trackRole} semanticTag={trackSemanticTag} semanticRole={trackSemanticRole} 
-    // accessibilities:
-    tabIndex={-1} // negative [tabIndex] => act as *wrapper* element, if input is `:focus` (pseudo) => the wrapper is also `.focus` (synthetic)
-     arrive={arriveLeaveState.arrive} 
-    // variants:
-    theme={theme} mild={mild} 
-    // classes:
-    mainClass={trackMainClass} classes={[...(trackClasses ?? []),
-            'track',
-        ]} variantClasses={trackVariantClasses} stateClasses={trackStateClasses} 
-    // styles:
-    style={trackStyle}>
-                {orientationVertical ? trackUpper : trackLower}
-                <EditableActionControl 
-    // essentials:
-    elmRef={(elm) => {
-            setRef(thumbRef, elm);
-            setRef(thumbRef2, elm);
-        }} 
-    // semantics:
-    tag={thumbTag} role={thumbRole} semanticTag={thumbSemanticTag} semanticRole={thumbSemanticRole} 
-    // accessibilities:
-    tabIndex={-1} // negative [tabIndex] => act as *wrapper* element, if input is `:focus` (pseudo) => the wrapper is also `.focus` (synthetic)
-     focus={focusBlurState.focus} arrive={arriveLeaveState.arrive} 
-    // variants:
-    theme={theme} mild={mildAlternate} 
-    // classes:
-    mainClass={thumbMainClass} classes={[...(thumbClasses ?? []),
-            'thumb',
-        ]} variantClasses={thumbVariantClasses} stateClasses={[...(thumbStateClasses ?? []),
-            pressReleaseState.class,
-        ]} 
-    // styles:
-    style={thumbStyle} 
-    // events:
-    onAnimationEnd={pressReleaseState.handleAnimationEnd}>
-                </EditableActionControl>
-                {orientationVertical ? trackLower : trackUpper}
-            </EditableControl>
-        </EditableControl>);
+        } },
+        React.createElement("input", { 
+            // essentials:
+            ref: (elm) => {
+                setRef(elmRef, elm);
+                setRef(inputRef, elm);
+            }, ...{
+                autoFocus,
+                tabIndex: -1, // non focusable
+            }, disabled: !propEnabled, readOnly: propReadOnly, ...{
+                name,
+                form,
+                // defaultValue,
+                value: valueFn,
+            }, ...{
+                required,
+                min: negativeFn ? trimValue(maxFn) : minFn,
+                max: negativeFn ? minFn : maxFn,
+                step: stepFn,
+            }, ...{
+                type: 'range',
+            }, 
+            // events:
+            onChange: (e) => {
+                onChange?.(e);
+                // then do nothing here, just for satisfying React for controllable readonly input
+                // passing `onChange={undefined}` causing React unhappy
+            } }),
+        React.createElement(EditableControl, { 
+            // essentials:
+            elmRef: (elm) => {
+                setRef(trackRef, elm);
+                setRef(trackRef2, elm);
+            }, 
+            // semantics:
+            tag: trackTag, role: trackRole, semanticTag: trackSemanticTag, semanticRole: trackSemanticRole, 
+            // accessibilities:
+            tabIndex: -1, arrive: arriveLeaveState.arrive, 
+            // variants:
+            theme: theme, mild: mild, 
+            // classes:
+            mainClass: trackMainClass, classes: [...(trackClasses ?? []),
+                'track',
+            ], variantClasses: trackVariantClasses, stateClasses: trackStateClasses, 
+            // styles:
+            style: trackStyle },
+            orientationVertical ? trackUpper : trackLower,
+            React.createElement(EditableActionControl, { 
+                // essentials:
+                elmRef: (elm) => {
+                    setRef(thumbRef, elm);
+                    setRef(thumbRef2, elm);
+                }, 
+                // semantics:
+                tag: thumbTag, role: thumbRole, semanticTag: thumbSemanticTag, semanticRole: thumbSemanticRole, 
+                // accessibilities:
+                tabIndex: -1, focus: focusBlurState.focus, arrive: arriveLeaveState.arrive, 
+                // variants:
+                theme: theme, mild: mildAlternate, 
+                // classes:
+                mainClass: thumbMainClass, classes: [...(thumbClasses ?? []),
+                    'thumb',
+                ], variantClasses: thumbVariantClasses, stateClasses: [...(thumbStateClasses ?? []),
+                    pressReleaseState.class,
+                ], 
+                // styles:
+                style: thumbStyle, 
+                // events:
+                onAnimationEnd: pressReleaseState.handleAnimationEnd }),
+            orientationVertical ? trackLower : trackUpper)));
 }
 export { Range as default };
