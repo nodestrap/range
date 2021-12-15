@@ -1,6 +1,6 @@
 {
   "name": "@nodestrap/range",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "A UI for the user defines a numeric value in the specified range.",
   "type": "module",
   "main": "dist/Range.js",
@@ -33,7 +33,7 @@
   "dependencies": {
     "@cssfn/css-config": "^1.0.1",
     "@cssfn/css-var": "^1.0.3",
-    "@cssfn/cssfn": "^1.0.6",
+    "@cssfn/cssfn": "^1.0.7",
     "@cssfn/react-cssfn": "^1.0.9",
     "@cssfn/types": "^1.0.3",
     "@nodestrap/accessibilities": "^4.0.2",

@@ -395,52 +395,28 @@ export function Range(props) {
         } // if
         return value;
     }, [minFn, maxFn, stepFn, negativeFn]); // (re)create the function on every time the constraints changes
-    const triggerInputChange = (value) => {
-        const inputElm = inputRef.current;
-        if (!inputElm)
-            return;
-        setTimeout(() => {
-            inputElm.valueAsNumber = value;
-            triggerChange(inputElm);
-        }, 0);
-    };
     const [valueDn, setValueDn] = useReducer(useCallback((value, action) => {
         switch (action.type) {
             case 'setValue': {
-                const newValue = trimValue(action.payload);
-                if ((newValue !== value) && (action.triggerChange === true)) {
-                    triggerInputChange(newValue);
-                } // if
-                return newValue;
+                return trimValue(action.payload);
             }
             case 'setValueRatio': {
                 let valueRatio = action.payload;
                 // make sure the valueRatio is between 0 & 1:
                 valueRatio = Math.min(Math.max(valueRatio, 0), 1);
-                const newValue = trimValue(minFn + ((maxFn - minFn) * valueRatio));
-                if ((newValue !== value) && (action.triggerChange === true)) {
-                    triggerInputChange(newValue);
-                } // if
-                return newValue;
+                return trimValue(minFn + ((maxFn - minFn) * valueRatio));
             }
             case 'decrease': {
-                const newValue = trimValue(value - ((stepFn || 1) * (negativeFn ? -1 : 1) * (action.payload)));
-                if ((newValue !== value) && (action.triggerChange === true)) {
-                    triggerInputChange(newValue);
-                } // if
-                return newValue;
+                return trimValue(value - ((stepFn || 1) * (negativeFn ? -1 : 1) * (action.payload)));
             }
             case 'increase': {
-                const newValue = trimValue(value + ((stepFn || 1) * (negativeFn ? -1 : 1) * (action.payload)));
-                if ((newValue !== value) && (action.triggerChange === true)) {
-                    triggerInputChange(newValue);
-                } // if
-                return newValue;
+                return trimValue(value + ((stepFn || 1) * (negativeFn ? -1 : 1) * (action.payload)));
             }
             default:
                 return value; // no change
         } // switch
     }, [minFn, maxFn, stepFn, negativeFn, trimValue]) /* (re)create the reducer function on every time the constraints changes */, /*initialState: */ valueCtrl ?? parseNumber(defaultValue) ?? trimValue(defaultValueFn));
+    const prevValueDn = useRef(valueDn);
     // fn props:
     const valueRaw = valueCtrl /*controllable*/ ?? valueDn /*uncontrollable*/;
     const valueFn = trimValue(valueRaw);
@@ -452,9 +428,19 @@ export function Range(props) {
             return; // the effect should only run once
         hasLoaded.current = true;
         if (valueRaw !== valueFn) {
-            setValueDn({ type: 'setValue', payload: valueFn, triggerChange: true });
+            setValueDn({ type: 'setValue', payload: valueFn });
         } // if
     }, [valueRaw, valueFn]); // the effect should only run once
+    useEffect(() => {
+        if (prevValueDn.current !== valueDn) {
+            prevValueDn.current = valueDn;
+            const inputElm = inputRef.current;
+            if (inputElm) {
+                inputElm.valueAsNumber = valueDn;
+                triggerChange(inputElm);
+            } // if
+        } // if
+    }, [valueDn]);
     // handlers:
     const handleMouseSlider = (e) => {
         if (!e.defaultPrevented) {
@@ -477,7 +463,7 @@ export function Range(props) {
             let valueRatio = cursorStart / trackSize;
             if (orientationVertical || (style.direction === 'rtl'))
                 valueRatio = (1 - valueRatio);
-            setValueDn({ type: 'setValueRatio', payload: valueRatio, triggerChange: true });
+            setValueDn({ type: 'setValueRatio', payload: valueRatio });
             pressReleaseState.handlePress();
             e.currentTarget.focus();
             e.preventDefault();
@@ -495,21 +481,21 @@ export function Range(props) {
                 };
                 const isRtl = (getComputedStyle(e.currentTarget).direction === 'rtl');
                 if (!orientationVertical && !isRtl && isKeyOf(['arrowleft', 'pagedown']))
-                    setValueDn({ type: 'decrease', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'decrease', payload: 1 });
                 else if (!orientationVertical && !isRtl && isKeyOf(['arrowright', 'pageup']))
-                    setValueDn({ type: 'increase', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'increase', payload: 1 });
                 else if (!orientationVertical && isRtl && isKeyOf(['arrowright', 'pagedown']))
-                    setValueDn({ type: 'decrease', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'decrease', payload: 1 });
                 else if (!orientationVertical && isRtl && isKeyOf(['arrowleft', 'pageup']))
-                    setValueDn({ type: 'increase', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'increase', payload: 1 });
                 else if (orientationVertical && isKeyOf(['arrowdown', 'pagedown']))
-                    setValueDn({ type: 'decrease', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'decrease', payload: 1 });
                 else if (orientationVertical && isKeyOf(['arrowup', 'pageup']))
-                    setValueDn({ type: 'increase', payload: 1, triggerChange: true });
+                    setValueDn({ type: 'increase', payload: 1 });
                 else if (isKeyOf(['home']))
-                    setValueDn({ type: 'setValue', payload: minFn, triggerChange: true });
+                    setValueDn({ type: 'setValue', payload: minFn });
                 else if (isKeyOf(['end']))
-                    setValueDn({ type: 'setValue', payload: maxFn, triggerChange: true });
+                    setValueDn({ type: 'setValue', payload: maxFn });
                 else
                     return false; // not handled
                 return true; // handled
