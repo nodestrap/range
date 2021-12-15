@@ -442,6 +442,18 @@ export function Range(props) {
         } // if
     }, [valueDn]);
     // handlers:
+    const handleTouchSlider = (e) => {
+        if (e.touches.length === 1) { // only one finger touch
+            handleMouseSlider({
+                defaultPrevented: e.defaultPrevented,
+                preventDefault: e.preventDefault,
+                currentTarget: e.currentTarget,
+                buttons: 1,
+                clientX: e.touches[0].clientX,
+                clientY: e.touches[0].clientY,
+            });
+        } // if
+    };
     const handleMouseSlider = (e) => {
         if (!e.defaultPrevented) {
             if (!propEnabled)
@@ -564,6 +576,12 @@ export function Range(props) {
         }, onMouseMove: (e) => {
             props.onMouseMove?.(e);
             handleMouseSlider(e);
+        }, onTouchStart: (e) => {
+            props.onTouchStart?.(e);
+            handleTouchSlider(e);
+        }, onTouchMove: (e) => {
+            props.onTouchMove?.(e);
+            handleTouchSlider(e);
         }, onKeyDown: (e) => {
             props.onKeyDown?.(e);
             handleKeyboardSlider(e);

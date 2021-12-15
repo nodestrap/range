@@ -1,6 +1,6 @@
 {
   "name": "@nodestrap/range",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "A UI for the user defines a numeric value in the specified range.",
   "type": "module",
   "main": "dist/Range.js",
