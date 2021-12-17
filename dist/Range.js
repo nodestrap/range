@@ -55,7 +55,7 @@ EditableActionControl, } from '@nodestrap/editable-action-control';
 // hooks:
 // layouts:
 export const defaultOrientationRuleOptions = defaultInlineOrientationRuleOptions;
-const [rangeVarRefs, rangeVarDecls] = createCssVar();
+const [rangeVarRefs, rangeVarDecls] = createCssVar({ minify: false }); // do not minify to make sure `style={{ --valueRatio: ... }}` is the same between in server (without `usesRangeVars` rendered) & client (with `usesRangeVars` rendered)
 /**
  * Uses Range variables.
  * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents Range variables definitions.
