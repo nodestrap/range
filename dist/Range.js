@@ -37,7 +37,7 @@ import {
 usesSizeVariant, defaultInlineOrientationRuleOptions, normalizeOrientationRule, usesOrientationRule, useOrientationVariant, isNude, usesNudeVariant, useNudeVariant, usesMildVariant, usesBackg, usesBorderRadius, expandBorderRadius, expandPadding, } from '@nodestrap/basic';
 import { 
 // hooks:
-usesBorderAsContainer, } from '@nodestrap/content';
+usesBorderAsContainer, } from '@nodestrap/container';
 import { 
 // hooks:
 useFocusBlurState, useArriveLeaveState, } from '@nodestrap/control';

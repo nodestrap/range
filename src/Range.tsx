@@ -111,7 +111,7 @@ import {
 import {
     // hooks:
     usesBorderAsContainer,
-}                           from '@nodestrap/content'
+}                           from '@nodestrap/container'
 import {
     // hooks:
     useFocusBlurState,
