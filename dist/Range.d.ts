@@ -1,7 +1,7 @@
 import { default as React } from 'react';
 import type { Optional } from '@cssfn/types';
 import { Tag, Role, SemanticTag, SemanticRole } from '@nodestrap/element';
-import { OrientationName, OrientationRuleOptions, OrientationVariant, NudeVariant } from '@nodestrap/basic';
+import { OrientationName, OrientationRuleOptions, OrientationVariant } from '@nodestrap/basic';
 import { EditableActionControlProps } from '@nodestrap/editable-action-control';
 export declare const defaultOrientationRuleOptions: OrientationRuleOptions;
 export interface RangeVars {
@@ -16,17 +16,17 @@ export interface RangeVars {
 }
 /**
  * Uses Range variables.
- * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents Range variables definitions.
+ * @returns A `[Factory<Rule>, ReadonlyRefs, ReadonlyDecls]` represents Range variables definitions.
  */
-export declare const usesRangeVars: () => readonly [() => import("@cssfn/cssfn").StyleCollection, import("@cssfn/css-var").ReadonlyRefs<RangeVars>, import("@cssfn/css-var").ReadonlyDecls<RangeVars>];
+export declare const usesRangeVars: () => readonly [() => import("@cssfn/cssfn").Rule, import("@cssfn/css-var").ReadonlyRefs<RangeVars>, import("@cssfn/css-var").ReadonlyDecls<RangeVars>];
 export declare const inputElm = ":first-child";
 export declare const trackElm = ".track";
 export declare const trackLowerElm = ".tracklower";
 export declare const trackUpperElm = ".trackupper";
 export declare const thumbElm = ".thumb";
-export declare const usesRangeLayout: (options?: OrientationRuleOptions | undefined) => import("@cssfn/cssfn").StyleCollection;
-export declare const usesRangeVariants: () => import("@cssfn/cssfn").StyleCollection;
-export declare const usesRangeStates: () => import("@cssfn/cssfn").StyleCollection;
+export declare const usesRangeLayout: (options?: OrientationRuleOptions | undefined) => import("@cssfn/cssfn").Rule;
+export declare const usesRangeVariants: () => import("@cssfn/cssfn").Rule;
+export declare const usesRangeStates: () => import("@cssfn/cssfn").Rule;
 export declare const useRangeSheet: import("@cssfn/types").Factory<import("jss").Classes<"main">>;
 export declare const cssProps: import("@cssfn/css-config").Refs<{
     cursor: string;
@@ -92,7 +92,7 @@ export declare const cssProps: import("@cssfn/css-config").Refs<{
     thumbPaddingInline: number;
     thumbPaddingBlock: number;
 }>, cssConfig: import("@cssfn/css-config").CssConfigSettings;
-export interface RangeProps extends EditableActionControlProps<HTMLInputElement>, Pick<React.InputHTMLAttributes<HTMLInputElement>, 'disabled'>, OrientationVariant, NudeVariant {
+export interface RangeProps extends EditableActionControlProps<HTMLInputElement>, Pick<React.InputHTMLAttributes<HTMLInputElement>, 'disabled'>, OrientationVariant {
     trackStyle?: React.CSSProperties;
     trackRef?: React.Ref<HTMLElement>;
     trackLowerStyle?: React.CSSProperties;
@@ -136,7 +136,6 @@ export interface RangeProps extends EditableActionControlProps<HTMLInputElement>
     min?: string | number;
     max?: string | number;
     step?: string | number;
-    onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 export declare function Range(props: RangeProps): JSX.Element;
 export { Range as default };

@@ -2,11 +2,13 @@
 import { default as React, useReducer, useRef, useCallback, useEffect, } from 'react'; // base technology of our nodestrap components
 import { 
 // compositions:
-composition, mainComposition, imports, 
-// layouts:
-layout, vars, children, 
+mainComposition, 
+// styles:
+style, vars, imports, 
 // rules:
-variants, rule, } from '@cssfn/cssfn'; // cssfn core
+rule, variants, 
+//combinators:
+children, } from '@cssfn/cssfn'; // cssfn core
 import { 
 // hooks:
 createUseSheet, } from '@cssfn/react-cssfn'; // cssfn for react
@@ -34,7 +36,7 @@ import {
 Element, } from '@nodestrap/element';
 import { 
 // hooks:
-usesSizeVariant, defaultInlineOrientationRuleOptions, normalizeOrientationRule, usesOrientationRule, useOrientationVariant, isNude, usesNudeVariant, useNudeVariant, usesMildVariant, usesBackg, usesBorderRadius, expandBorderRadius, expandPadding, } from '@nodestrap/basic';
+usesSizeVariant, defaultInlineOrientationRuleOptions, normalizeOrientationRule, usesOrientationRule, useOrientationVariant, isNude, usesBackg, usesBorderRadius, expandBorderRadius, expandPadding, } from '@nodestrap/basic';
 import { 
 // hooks:
 usesBorderAsContainer, } from '@nodestrap/container';
@@ -58,17 +60,17 @@ export const defaultOrientationRuleOptions = defaultInlineOrientationRuleOptions
 const [rangeVarRefs, rangeVarDecls] = createCssVar({ minify: false }); // do not minify to make sure `style={{ --valueRatio: ... }}` is the same between in server (without `usesRangeVars` rendered) & client (with `usesRangeVars` rendered)
 /**
  * Uses Range variables.
- * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents Range variables definitions.
+ * @returns A `[Factory<Rule>, ReadonlyRefs, ReadonlyDecls]` represents Range variables definitions.
  */
 export const usesRangeVars = () => {
     // dependencies:
     const [, backgRefs] = usesBackg();
     return [
-        () => composition([
-            vars({
+        () => style({
+            ...vars({
                 [rangeVarDecls.backg]: backgRefs.backg,
             }),
-        ]),
+        }),
         rangeVarRefs,
         rangeVarDecls,
     ];
@@ -90,17 +92,23 @@ export const usesRangeLayout = (options) => {
     const [, , borderRadiusDecls] = usesBorderRadius();
     // range vars:
     const [rangeVars, rangeVarRefs] = usesRangeVars();
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // layouts:
             usesEditableControlLayout(),
             // range vars:
             rangeVars(),
         ]),
-        layout({
+        ...style({
             // layouts:
-            // display        : 'flex',   // customizable orientation // already defined in variant `.block`/`.inline`
-            // flexDirection  : 'row',    // customizable orientation // already defined in variant `.block`/`.inline`
+            ...rule(orientationBlockSelector, {
+                display: 'inline-flex',
+                flexDirection: 'column', // items are stacked vertically
+            }),
+            ...rule(orientationInlineSelector, {
+                display: 'flex',
+                flexDirection: 'row', // items are stacked horizontally
+            }),
             justifyContent: 'start',
             alignItems: 'center',
             flexWrap: 'nowrap',
@@ -109,23 +117,35 @@ export const usesRangeLayout = (options) => {
             // // animations:
             // boxShadow      : 'initial !important', // no focus animation
             // children:
-            ...children(inputElm, [
-                layout({
-                    // layouts:
-                    display: 'none', // hide the input
+            ...rule(orientationBlockSelector, {
+                ...children('::before', {
+                    ...imports([
+                        fillTextLineWidthLayout(),
+                    ]),
                 }),
-            ]),
-            ...children(trackElm, [
-                imports([
+            }),
+            ...rule(orientationInlineSelector, {
+                ...children('::before', {
+                    ...imports([
+                        fillTextLineHeightLayout(),
+                    ]),
+                }),
+            }),
+            ...children(inputElm, {
+                // layouts:
+                display: 'none', // hide the input
+            }),
+            ...children(trackElm, {
+                ...imports([
                     usesBorderAsContainer({
                         orientationBlockSelector: parentOrientationBlockSelector,
                         orientationInlineSelector: parentOrientationInlineSelector,
                     }),
                 ]),
-                layout({
+                ...style({
                     // layouts:
                     display: 'flex',
-                    // flexDirection  : 'row',     // customizable orientation // already defined in variant `.block`/`.inline`
+                    flexDirection: 'inherit',
                     justifyContent: 'start',
                     alignItems: 'center',
                     flexWrap: 'nowrap',
@@ -135,59 +155,49 @@ export const usesRangeLayout = (options) => {
                     // animations:
                     boxShadow: 'initial !important',
                     // children:
-                    ...children([trackLowerElm, trackUpperElm], [
-                        layout({
-                            // layouts:
-                            display: 'inline-block',
-                            // backgrounds:
-                            backg: rangeVarRefs.backg,
-                            // borders:
-                            ...expandBorderRadius(),
-                            // remove rounded corners on top:
-                            [borderRadiusDecls.borderStartStartRadius]: '0px',
-                            [borderRadiusDecls.borderStartEndRadius]: '0px',
-                            // remove rounded corners on bottom:
-                            [borderRadiusDecls.borderEndStartRadius]: '0px',
-                            [borderRadiusDecls.borderEndEndRadius]: '0px',
-                            // sizes:
-                            alignSelf: 'stretch', // follows parent's height
-                        }),
-                    ]),
-                    ...children(trackLowerElm, [
-                        layout({
-                            // sizes:
-                            flex: [[rangeVarRefs.valueRatio, rangeVarRefs.valueRatio, 0]],
-                            // customize:
-                            ...usesGeneralProps(usesPrefixedProps(cssProps, 'tracklower')), // apply general cssProps starting with tracklower***
-                        }),
-                    ]),
-                    ...children(trackUpperElm, [
-                        layout({
-                            // sizes:
-                            flex: [[`calc(1 - ${rangeVarRefs.valueRatio})`, `calc(1 - ${rangeVarRefs.valueRatio})`, 0]],
-                            // customize:
-                            ...usesGeneralProps(usesPrefixedProps(cssProps, 'trackupper')), // apply general cssProps starting with trackupper***
-                        }),
-                    ]),
-                    ...children(['&', thumbElm], [
-                        layout({
-                            cursor: 'inherit',
-                        }),
-                    ]),
-                    ...children(thumbElm, [
-                        layout({
-                            // layouts:
-                            display: 'inline-block',
-                            // sizes:
-                            boxSizing: 'border-box',
-                            // customize:
-                            ...usesGeneralProps(usesPrefixedProps(cssProps, 'thumb')),
-                            // borders:
-                            ...expandBorderRadius({ borderRadius: cssProps.thumbBorderRadius }),
-                            // spacings:
-                            ...expandPadding({ paddingInline: cssProps.thumbPaddingInline, paddingBlock: cssProps.thumbPaddingBlock }), // expand padding css vars
-                        }),
-                    ]),
+                    ...children([trackLowerElm, trackUpperElm], {
+                        // layouts:
+                        display: 'inline-block',
+                        // backgrounds:
+                        backg: rangeVarRefs.backg,
+                        // borders:
+                        ...expandBorderRadius(),
+                        // remove rounded corners on top:
+                        [borderRadiusDecls.borderStartStartRadius]: '0px',
+                        [borderRadiusDecls.borderStartEndRadius]: '0px',
+                        // remove rounded corners on bottom:
+                        [borderRadiusDecls.borderEndStartRadius]: '0px',
+                        [borderRadiusDecls.borderEndEndRadius]: '0px',
+                        // sizes:
+                        alignSelf: 'stretch', // follows parent's height
+                    }),
+                    ...children(trackLowerElm, {
+                        // sizes:
+                        flex: [[rangeVarRefs.valueRatio, rangeVarRefs.valueRatio, 0]],
+                        // customize:
+                        ...usesGeneralProps(usesPrefixedProps(cssProps, 'tracklower')), // apply general cssProps starting with tracklower***
+                    }),
+                    ...children(trackUpperElm, {
+                        // sizes:
+                        flex: [[`calc(1 - ${rangeVarRefs.valueRatio})`, `calc(1 - ${rangeVarRefs.valueRatio})`, 0]],
+                        // customize:
+                        ...usesGeneralProps(usesPrefixedProps(cssProps, 'trackupper')), // apply general cssProps starting with trackupper***
+                    }),
+                    ...children(['&', thumbElm], {
+                        cursor: 'inherit',
+                    }),
+                    ...children(thumbElm, {
+                        // layouts:
+                        display: 'inline-block',
+                        // sizes:
+                        boxSizing: 'border-box',
+                        // customize:
+                        ...usesGeneralProps(usesPrefixedProps(cssProps, 'thumb')),
+                        // borders:
+                        ...expandBorderRadius({ borderRadius: cssProps.thumbBorderRadius }),
+                        // spacings:
+                        ...expandPadding({ paddingInline: cssProps.thumbPaddingInline, paddingBlock: cssProps.thumbPaddingBlock }), // expand padding css vars
+                    }),
                     // customize:
                     ...usesGeneralProps(usesPrefixedProps(cssProps, 'track')),
                     // borders:
@@ -195,116 +205,59 @@ export const usesRangeLayout = (options) => {
                     // spacings:
                     ...expandPadding({ paddingInline: cssProps.trackPaddingInline, paddingBlock: cssProps.trackPaddingBlock }), // expand padding css vars
                 }),
-            ]),
+            }),
             // customize:
-            ...usesGeneralProps(cssProps), // apply general cssProps
+            ...usesGeneralProps(cssProps),
+            ...rule(orientationBlockSelector, {
+                // overwrites propName = propName{Block}:
+                ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, 'block')),
+            }),
+            ...rule(orientationInlineSelector, {
+                // overwrites propName = propName{Inline}:
+                ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, 'inline')),
+            }),
         }),
-        variants([
-            /* the orientation variants are part of the layout, because without these variants the layout is broken */
-            rule(orientationBlockSelector, [
-                layout({
-                    // layouts:
-                    display: 'inline-flex',
-                    flexDirection: 'column',
-                    // children:
-                    ...children('::before', [
-                        imports([
-                            fillTextLineWidthLayout(),
-                        ]),
-                    ]),
-                    ...children(trackElm, [
-                        layout({
-                            // layouts:
-                            flexDirection: 'column', // items are stacked vertically
-                        }),
-                    ]),
-                    // overwrites propName = propName{Block}:
-                    ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, 'block')),
-                }),
-            ]),
-            rule(orientationInlineSelector, [
-                layout({
-                    // layouts:
-                    display: 'flex',
-                    flexDirection: 'row',
-                    // children:
-                    ...children('::before', [
-                        imports([
-                            fillTextLineHeightLayout(),
-                        ]),
-                    ]),
-                    ...children(trackElm, [
-                        layout({
-                            // layouts:
-                            flexDirection: 'row', // items are stacked horizontally
-                        }),
-                    ]),
-                    // overwrites propName = propName{Inline}:
-                    ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, 'inline')),
-                }),
-            ]),
-        ]),
-    ]);
+    });
 };
 export const usesRangeVariants = () => {
     // dependencies:
     // layouts:
-    const [sizes] = usesSizeVariant((sizeName) => composition([
-        layout({
-            // overwrites propName = propName{SizeName}:
-            ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
-        }),
-    ]));
-    // colors:
-    const [, mildRefs] = usesMildVariant();
-    // borders:
-    const [, , borderRadiusDecls] = usesBorderRadius();
-    return composition([
-        imports([
+    const [sizes] = usesSizeVariant((sizeName) => style({
+        // overwrites propName = propName{SizeName}:
+        ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
+    }));
+    return style({
+        ...imports([
             // variants:
             usesEditableControlVariants(),
             // layouts:
             sizes(),
-            usesNudeVariant(),
         ]),
-        variants([
-            isNude([
-                layout({
-                    // foregrounds:
-                    foreg: [[mildRefs.foregFn], '!important'],
-                    // borders:
-                    // remove rounded corners on top:
-                    [borderRadiusDecls.borderStartStartRadius]: '0px',
-                    [borderRadiusDecls.borderStartEndRadius]: '0px',
-                    // remove rounded corners on bottom:
-                    [borderRadiusDecls.borderEndStartRadius]: '0px',
-                    [borderRadiusDecls.borderEndEndRadius]: '0px',
-                    // animations:
-                    boxShadow: 'initial !important', // no focus animation
-                }),
-            ]),
+        ...variants([
+            isNude({
+                // animations:
+                boxShadow: 'initial !important', // no focus animation on slider, but has one in thumb
+            }),
         ]),
-    ]);
+    });
 };
 export const usesRangeStates = () => {
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // states:
             usesEditableControlStates(),
         ]),
-    ]);
+    });
 };
 export const useRangeSheet = createUseSheet(() => [
-    mainComposition([
-        imports([
-            // layouts:
-            usesRangeLayout(),
-            // variants:
-            usesRangeVariants(),
-            // states:
-            usesRangeStates(),
-        ]),
-    ]),
+    mainComposition(imports([
+        // layouts:
+        usesRangeLayout(),
+        // variants:
+        usesRangeVariants(),
+        // states:
+        usesRangeStates(),
+    ])),
 ], /*sheetId :*/ 'jue5zxlqsc'); // an unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 // configs:
 export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
@@ -362,7 +315,6 @@ export function Range(props) {
     // variants:
     const orientationVariant = useOrientationVariant(props);
     const orientationVertical = (orientationVariant.class === 'block');
-    const nudeVariant = useNudeVariant({ nude });
     // states:
     const focusBlurState = useFocusBlurState(props);
     const arriveLeaveState = useArriveLeaveState(props, focusBlurState);
@@ -555,11 +507,10 @@ export function Range(props) {
         // semantics:
         semanticTag: props.semanticTag ?? [null], semanticRole: props.semanticRole ?? 'slider', "aria-orientation": props['aria-orientation'] ?? (orientationVertical ? 'vertical' : 'horizontal'), "aria-valuenow": props['aria-valuenow'] ?? valueFn, "aria-valuemin": props['aria-valuemin'] ?? (negativeFn ? maxFn : minFn), "aria-valuemax": props['aria-valuemax'] ?? (negativeFn ? minFn : maxFn), 
         // variants:
-        theme: theme, mild: mild, 
+        nude: nude, theme: theme, mild: mild, 
         // classes:
         mainClass: props.mainClass ?? sheet.main, variantClasses: [...(props.variantClasses ?? []),
             orientationVariant.class,
-            nudeVariant.class,
         ], stateClasses: [...(props.stateClasses ?? []),
             focusBlurState.class,
             arriveLeaveState.class,
